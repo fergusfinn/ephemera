@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT value, timestamp FROM metrics WHERE namespace = ? AND id = ? ORDER BY timestamp ASC",
+  "describe": {
+    "columns": [
+      {
+        "name": "value",
+        "ordinal": 0,
+        "type_info": "Float"
+      },
+      {
+        "name": "timestamp",
+        "ordinal": 1,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "d4fb881219c7857014fa4a76d3c44b6f4d28a4326bb91ce27ffaab948eecc0e8"
+}
