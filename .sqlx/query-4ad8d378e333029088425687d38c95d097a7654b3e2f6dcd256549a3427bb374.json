@@ -1,0 +1,32 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT \n            id,\n            COUNT(*) as \"point_count: i64\",\n            MAX(timestamp) as \"last_timestamp: i64\"\n        FROM metrics \n        WHERE namespace = ? \n        GROUP BY id\n        ORDER BY MAX(timestamp) DESC\n        LIMIT ? OFFSET ?\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "point_count: i64",
+        "ordinal": 1,
+        "type_info": "Null"
+      },
+      {
+        "name": "last_timestamp: i64",
+        "ordinal": 2,
+        "type_info": "Null"
+      }
+    ],
+    "parameters": {
+      "Right": 3
+    },
+    "nullable": [
+      false,
+      null,
+      null
+    ]
+  },
+  "hash": "4ad8d378e333029088425687d38c95d097a7654b3e2f6dcd256549a3427bb374"
+}

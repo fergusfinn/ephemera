@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO metrics (namespace, id, value, timestamp) VALUES (?, ?, ?, ?)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": []
+  },
+  "hash": "89530ba7dea7eaa86d574e33adc44cb494fa5de0865a0c5c3b8ea70b7b0495b2"
+}

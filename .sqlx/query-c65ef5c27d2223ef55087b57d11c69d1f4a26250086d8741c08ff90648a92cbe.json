@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT value, timestamp FROM metrics WHERE namespace = ? AND id = ? ORDER BY timestamp DESC LIMIT 50",
+  "describe": {
+    "columns": [
+      {
+        "name": "value",
+        "ordinal": 0,
+        "type_info": "Float"
+      },
+      {
+        "name": "timestamp",
+        "ordinal": 1,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "c65ef5c27d2223ef55087b57d11c69d1f4a26250086d8741c08ff90648a92cbe"
+}
