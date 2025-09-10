@@ -32,5 +32,3 @@ jobs:
         
     - name: Run deploy script
       run: ./deploy.sh
-      env:
-        METRICS_KEY: ${{ secrets.METRICS_KEY }}
