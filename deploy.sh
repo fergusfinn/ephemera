@@ -3,16 +3,31 @@
 # Deploy script for Somnial
 set -e
 
+# Record deploy start time
+DEPLOY_START=$(date +%s)
+METRICS_KEY="${METRICS_KEY:-deploy}"
+
 echo "🔨 Building Somnial for Linux x86_64..."
-SQLX_OFFLINE=1 cross build --release --target x86_64-unknown-linux-gnu
+BUILD_START=$(date +%s)
+if [[ "$(uname -m)" == "x86_64" && "$(uname -s)" == "Linux" ]]; then
+    SQLX_OFFLINE=1 cargo build --release
+    BINARY_PATH="target/release/somnial"
+else
+    SQLX_OFFLINE=1 cross build --release --target x86_64-unknown-linux-gnu
+    BINARY_PATH="target/x86_64-unknown-linux-gnu/release/somnial"
+fi
+BUILD_END=$(date +%s)
+BUILD_DURATION=$((BUILD_END - BUILD_START))
 
 echo "📊 Recording binary size..."
-BINARY_SIZE=$(stat -f%z target/x86_64-unknown-linux-gnu/release/somnial 2>/dev/null || stat -c%s target/x86_64-unknown-linux-gnu/release/somnial 2>/dev/null || echo "0")
+BINARY_SIZE=$(stat -f%z "$BINARY_PATH" 2>/dev/null || stat -c%s "$BINARY_PATH" 2>/dev/null || echo "0")
 echo "Binary size: $BINARY_SIZE bytes"
-curl -X POST "https://charts.somnial.co/deploy/binary_size?value=$BINARY_SIZE" -f -s || echo "⚠️ Failed to record binary size metric"
+echo "Build duration: ${BUILD_DURATION}s"
+curl -X POST "https://charts.somnial.co/$METRICS_KEY/binary_size?value=$BINARY_SIZE" -f -s || echo "⚠️ Failed to record binary size metric"
+curl -X POST "https://charts.somnial.co/$METRICS_KEY/build_duration?value=$BUILD_DURATION" -f -s || echo "⚠️ Failed to record build duration metric"
 
 echo "📦 Syncing files to server..."
-rsync -avz --progress target/x86_64-unknown-linux-gnu/release/somnial somnial@ubuntu-4gb-nbg1-2:~/
+rsync -avz --progress "$BINARY_PATH" somnial@ubuntu-4gb-nbg1-2:~/
 rsync -avz --progress Caddyfile somnial@ubuntu-4gb-nbg1-2:~/
 
 echo "🔧 Installing Caddy and setting up systemd services..."
@@ -103,6 +118,13 @@ EOF
 echo "🚀 Restarting services..."
 ssh somnial@ubuntu-4gb-nbg1-2 "sudo systemctl restart somnial"
 ssh somnial@ubuntu-4gb-nbg1-2 "sudo systemctl restart caddy"
+
+DEPLOY_END=$(date +%s)
+DEPLOY_DURATION=$((DEPLOY_END - DEPLOY_START))
+
+echo "📊 Recording deploy duration..."
+echo "Deploy duration: ${DEPLOY_DURATION}s"
+curl -X POST "https://charts.somnial.co/$METRICS_KEY/deploy_duration?value=$DEPLOY_DURATION" -f -s || echo "⚠️ Failed to record deploy duration metric"
 
 echo "✅ Deploy complete!"
 echo "Check status with: ssh somnial@ubuntu-4gb-nbg1-2 'sudo systemctl status somnial'"

@@ -1,0 +1,33 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Tailscale
+      uses: tailscale/github-action@v2
+      with:
+        oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
+        oauth-secret: ${{ secrets.TAILSCALE_AUTH_KEY }}
+        tags: tag:ci
+        
+    - name: Setup Rust
+      uses: dtolnay/rust-toolchain@stable
+      
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ubuntu-4gb-nbg1-2 >> ~/.ssh/known_hosts
+        
+    - name: Run deploy script
+      run: ./deploy.sh
+      env:
+        METRICS_KEY: ${{ secrets.METRICS_KEY }}
