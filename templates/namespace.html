@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>{{ namespace }} - Metrics Namespace</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+        :root {
+            --border: hsl(220, 13%, 91%);
+            --primary: hsl(220, 9%, 46%);
+            --accent: hsl(220, 9%, 18%);
+            --bg: hsl(0, 0%, 100%);
+            --muted-bg: hsl(220, 14%, 96%);
+        }
+        
+        /* Breadcrumb improvements */
+        nav[aria-label="breadcrumb"] ul {
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        nav[aria-label="breadcrumb"] a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.15s ease;
+        }
+        
+        nav[aria-label="breadcrumb"] a:hover {
+            color: var(--accent);
+        }
+        
+        nav[aria-label="breadcrumb"] li:not(:last-child)::after {
+            content: "/";
+            margin-left: 0.5rem;
+            color: var(--border);
+        }
+        
+        .namespace-header {
+            margin-bottom: 3rem;
+        }
+        
+        .namespace-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 0 0 1rem 0;
+            letter-spacing: -0.025em;
+        }
+        
+        .namespace-subtitle {
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 400;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .chart-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: all 0.15s ease;
+        }
+        
+        .chart-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px hsla(220, 9%, 18%, 0.06);
+        }
+        
+        .chart-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 0 0 0.75rem 0;
+            letter-spacing: -0.025em;
+        }
+        
+        .chart-card p {
+            color: var(--primary);
+            margin: 0 0 0.5rem 0;
+            font-size: 0.875rem;
+        }
+        
+        .chart-card small {
+            color: var(--primary);
+            font-size: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-card footer {
+            margin-top: auto;
+        }
+        
+        .chart-card a[role="button"] {
+            background: var(--accent);
+            color: white;
+            border: 1px solid var(--accent);
+            padding: 0.5rem 0.875rem;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            text-align: center;
+        }
+        
+        .chart-card a[role="button"]:hover {
+            background: hsl(220, 9%, 28%);
+            border-color: hsl(220, 9%, 28%);
+        }
+        
+        /* Responsive pagination */
+        .pagination {
+            margin-top: 3rem;
+        }
+        
+        .pagination ul {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-wrap: wrap;
+        }
+        
+        .page-numbers {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .page-link {
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            color: var(--accent);
+            background: var(--bg);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+        
+        .page-link:hover {
+            background: var(--muted-bg);
+            border-color: var(--accent);
+        }
+        
+        .current-page {
+            padding: 0.5rem 0.75rem;
+            background: var(--accent);
+            color: white;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .ellipsis {
+            padding: 0.5rem 0.25rem;
+            color: var(--primary);
+        }
+        
+        .page-counter {
+            display: none;
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 0.875rem;
+        }
+        
+        .pagination a[role="button"] {
+            background: var(--bg);
+            color: var(--accent);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+        
+        .pagination a[role="button"]:hover {
+            background: var(--muted-bg);
+            border-color: var(--accent);
+        }
+        
+        /* Small mobile */
+        @media (max-width: 480px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            .namespace-title {
+                font-size: 1.875rem;
+            }
+        }
+        
+        /* Large mobile/small tablet */
+        @media (max-width: 768px) {
+            .chart-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+            .page-numbers {
+                display: none;
+            }
+            .page-counter {
+                display: block;
+            }
+            .pagination ul {
+                gap: 1rem;
+            }
+        }
+        
+        /* Tablet */
+        @media (max-width: 1024px) {
+            .chart-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <nav aria-label="breadcrumb">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li>{{ namespace }}</li>
+            </ul>
+        </nav>
+        
+        <div class="namespace-header">
+            <h1 class="namespace-title">{{ namespace }}</h1>
+            {% if charts.is_empty() %}
+                <p class="namespace-subtitle">No charts found in this namespace yet. Start by posting some metrics to create your first chart!</p>
+            {% endif %}
+        </div>
+        
+        {% if !charts.is_empty() %}
+            <div class="chart-grid">
+                {% for chart in charts %}
+                <article class="chart-card">
+                    <h3>{{ chart.id }}</h3>
+                    <p>{{ chart.point_count }} data points</p>
+                    <small>Last updated: {{ chart.last_updated }}</small>
+                    <footer>
+                        <a href="/{{ namespace }}/{{ chart.id }}" role="button">View Chart</a>
+                    </footer>
+                </article>
+                {% endfor %}
+            </div>
+            
+            {% if total_pages > 1 %}
+            <nav aria-label="Pagination" class="pagination">
+                <ul>
+                    {% if has_prev %}
+                        <li><a href="/{{ namespace }}?page={{ current_page - 1 }}" role="button" class="secondary outline">‹ Prev</a></li>
+                    {% endif %}
+                    
+                    <!-- Show page numbers on larger screens -->
+                    <li class="page-numbers">
+                        {% if current_page > 2 %}
+                            <a href="/{{ namespace }}?page=1" class="page-link">1</a>
+                            {% if current_page > 3 %}
+                                <span class="ellipsis">…</span>
+                            {% endif %}
+                        {% endif %}
+                        
+                        {% if has_prev %}
+                            <a href="/{{ namespace }}?page={{ current_page - 1 }}" class="page-link">{{ current_page - 1 }}</a>
+                        {% endif %}
+                        
+                        <span class="current-page">{{ current_page }}</span>
+                        
+                        {% if has_next %}
+                            <a href="/{{ namespace }}?page={{ current_page + 1 }}" class="page-link">{{ current_page + 1 }}</a>
+                        {% endif %}
+                        
+                        {% if current_page < total_pages - 1 %}
+                            {% if current_page < total_pages - 2 %}
+                                <span class="ellipsis">…</span>
+                            {% endif %}
+                            <a href="/{{ namespace }}?page={{ total_pages }}" class="page-link">{{ total_pages }}</a>
+                        {% endif %}
+                    </li>
+                    
+                    <!-- Simple counter for mobile -->
+                    <li class="page-counter">
+                        <span>{{ current_page }} / {{ total_pages }}</span>
+                    </li>
+                    
+                    {% if has_next %}
+                        <li><a href="/{{ namespace }}?page={{ current_page + 1 }}" role="button" class="secondary outline">Next ›</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% endif %}
+    </main>
+</body>
+</html>

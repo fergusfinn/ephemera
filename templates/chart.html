@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>{{ namespace }}/{{ id }} - Chart</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        :root {
+            --chart-border: hsl(220, 13%, 91%);
+            --chart-primary: hsl(220, 9%, 46%);
+            --chart-accent: hsl(220, 9%, 18%);
+            --chart-bg: hsl(0, 0%, 100%);
+        }
+        
+        .chart-header {
+            margin-bottom: 2rem;
+        }
+        
+        .chart-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--chart-accent);
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -0.025em;
+        }
+        
+        .chart-subtitle {
+            color: var(--chart-primary);
+            font-size: 0.875rem;
+            font-weight: 400;
+            margin: 0;
+        }
+        
+        .chart-container {
+            background: var(--chart-bg);
+            border: 1px solid var(--chart-border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .chart-canvas {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+        
+        /* Breadcrumb improvements */
+        nav[aria-label="breadcrumb"] ul {
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        nav[aria-label="breadcrumb"] a {
+            color: var(--chart-primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.15s ease;
+        }
+        
+        nav[aria-label="breadcrumb"] a:hover {
+            color: var(--chart-accent);
+        }
+        
+        nav[aria-label="breadcrumb"] li:not(:last-child)::after {
+            content: "/";
+            margin-left: 0.5rem;
+            color: var(--chart-border);
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <nav aria-label="breadcrumb">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/{{ namespace }}">{{ namespace }}</a></li>
+                <li>{{ id }}</li>
+            </ul>
+        </nav>
+        
+        <div class="chart-header">
+            <h1 class="chart-title">{{ id }}</h1>
+            <p class="chart-subtitle">{{ namespace }}</p>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-canvas">
+                <canvas id="chart"></canvas>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        const data = {{ data_json|safe }};
+        const ctx = document.getElementById('chart').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: '{{ id }}',
+                    data: data.map(point => ({
+                        x: new Date(point.timestamp * 1000),
+                        y: point.value
+                    })),
+                    borderColor: 'hsl(220, 9%, 18%)',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'hsl(220, 9%, 18%)',
+                    pointBorderColor: 'hsl(0, 0%, 100%)',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    tension: 0.1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 300,
+                    easing: 'easeOutQuart'
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'hsl(220, 9%, 18%)',
+                        titleColor: 'hsl(0, 0%, 100%)',
+                        bodyColor: 'hsl(210, 40%, 98%)',
+                        cornerRadius: 6,
+                        displayColors: false,
+                        titleFont: {
+                            size: 12,
+                            weight: '500'
+                        },
+                        bodyFont: {
+                            size: 14,
+                            weight: '600'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            displayFormats: {
+                                millisecond: 'HH:mm:ss.SSS',
+                                second: 'HH:mm:ss',
+                                minute: 'HH:mm',
+                                hour: 'HH:mm',
+                                day: 'MMM DD',
+                                week: 'MMM DD',
+                                month: 'MMM YYYY',
+                                quarter: 'MMM YYYY',
+                                year: 'YYYY'
+                            }
+                        },
+                        grid: {
+                            color: 'hsl(220, 13%, 91%)',
+                            lineWidth: 1
+                        },
+                        ticks: {
+                            color: 'hsl(220, 9%, 46%)',
+                            font: {
+                                size: 11
+                            },
+                            maxRotation: 0
+                        },
+                        border: {
+                            color: 'hsl(220, 13%, 91%)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        grid: {
+                            color: 'hsl(220, 13%, 91%)',
+                            lineWidth: 1
+                        },
+                        ticks: {
+                            color: 'hsl(220, 9%, 46%)',
+                            font: {
+                                size: 11
+                            }
+                        },
+                        border: {
+                            color: 'hsl(220, 13%, 91%)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

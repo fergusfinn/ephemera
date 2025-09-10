@@ -1,0 +1,7 @@
+charts.somnial.co {
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+    reverse_proxy localhost:3000
+}

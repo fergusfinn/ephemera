@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>Somnial - Metrics Collection</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+        :root {
+            --border: hsl(220, 13%, 91%);
+            --primary: hsl(220, 9%, 46%);
+            --accent: hsl(220, 9%, 18%);
+            --bg: hsl(0, 0%, 100%);
+            --muted-bg: hsl(220, 14%, 96%);
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem 0;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 0 0 1rem 0;
+            letter-spacing: -0.025em;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--primary);
+            font-weight: 400;
+            margin: 0;
+            line-height: 1.6;
+        }
+        
+        .endpoints-grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        }
+        
+        .endpoint-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            transition: all 0.15s ease;
+        }
+        
+        .endpoint-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px hsla(220, 9%, 18%, 0.06);
+        }
+        
+        .endpoint-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 0 0 1rem 0;
+        }
+        
+        .endpoint-method {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 0.875rem;
+            background: var(--muted-bg);
+            color: var(--accent);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            border: 1px solid var(--border);
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .endpoint-description {
+            color: var(--primary);
+            margin: 0 0 1.5rem 0;
+            line-height: 1.5;
+        }
+        
+        .endpoint-example {
+            background: var(--muted-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            padding: 1rem;
+        }
+        
+        .endpoint-example-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .endpoint-example-code {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 0.8125rem;
+            color: var(--accent);
+            margin: 0;
+            line-height: 1.4;
+            word-break: break-all;
+        }
+        
+        .endpoint-example-code a {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-color: var(--primary);
+        }
+        
+        .endpoint-example-code a:hover {
+            text-decoration-color: var(--accent);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.25rem;
+            }
+            .endpoints-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <div class="hero">
+            <h1 class="hero-title">Somnial</h1>
+            <p class="hero-subtitle">A simple time-series metrics collection and visualization service. Submit metrics via API and view interactive charts.</p>
+        </div>
+        
+        <div class="endpoints-grid">
+            <div class="endpoint-card">
+                <h3 class="endpoint-title">Submit Metrics</h3>
+                <code class="endpoint-method">POST /{namespace}/{id}?value={number}</code>
+                <p class="endpoint-description">Submit a metric value with a timestamp.</p>
+                <div class="endpoint-example">
+                    <p class="endpoint-example-label">Example</p>
+                    <p class="endpoint-example-code">curl -X POST "https://charts.somnial.co/myapp/cpu_usage?value=45.2"</p>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <h3 class="endpoint-title">View Charts</h3>
+                <code class="endpoint-method">GET /{namespace}/{id}</code>
+                <p class="endpoint-description">View an interactive chart of collected metrics over time.</p>
+                <div class="endpoint-example">
+                    <p class="endpoint-example-label">Example</p>
+                    <p class="endpoint-example-code"><a href="https://charts.somnial.co/myapp/cpu_usage" target="_blank">https://charts.somnial.co/myapp/cpu_usage</a></p>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <h3 class="endpoint-title">Browse Namespace</h3>
+                <code class="endpoint-method">GET /{namespace}</code>
+                <p class="endpoint-description">View all charts in a namespace.</p>
+                <div class="endpoint-example">
+                    <p class="endpoint-example-label">Example</p>
+                    <p class="endpoint-example-code"><a href="https://charts.somnial.co/myapp" target="_blank">https://charts.somnial.co/myapp</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
